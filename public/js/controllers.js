@@ -31,6 +31,7 @@ function PickMeCtrl($scope, $http) {
   this.map = null;
   this.geocoder = null;
   this.myLatlng = null;
+  this.destination = null;
   this.http = $http;
   this.scope = $scope;
 
@@ -43,6 +44,16 @@ function PickMeCtrl($scope, $http) {
       }
     }));
   });
+
+  $scope.wait = angular.bind(this, function() {
+    $http({method: 'GET', url: '/companion/pickMe',
+      params: {
+        username: 'Valera',
+        from: latLngToJSON(this.myLatlng),
+        to: latLngToJSON(this.destination)
+        // wt: this.scope.wt
+      }}).success(angular.bind(this, this.waitForDriver, $http));
+  })
 };
 
 PickMeCtrl.prototype.initialize = function(position) {
@@ -62,8 +73,9 @@ PickMeCtrl.prototype.initialize = function(position) {
 };
 
 PickMeCtrl.prototype.showDestination = function(destination, $http) {
+  this.destination = destination;
   var bounds = new google.maps.LatLngBounds();
-  bounds.extend(destination);
+  bounds.extend(this.destination);
   bounds.extend(this.myLatlng);
 
   this.map.fitBounds(bounds);
@@ -73,21 +85,28 @@ PickMeCtrl.prototype.showDestination = function(destination, $http) {
     position: destination,
     title: "Destination"
   });
-
-
-  this.http({method: 'GET', url: '/companion/pickMe',
-    params: {
-      username: 'Valera',
-      from: latLngToJSON(this.myLatlng),
-      to: latLngToJSON(destination)
-     // wt: this.scope.wt
-    }});//.success(angular.bind(this, this.waitForDriver));
 };
 
-PickMeCtrl.prototype.waitForDriver = function(data) {
-
+PickMeCtrl.prototype.waitForDriver = function($http, data) {
+  if (data.status == 'ok') {
+    this.userId = data.id;
+  }
+  jQuery("#wait-modal").modal();
+  this.timer = setInterval(angular.bind(this, this.timeout, $http), 1000);
 };
 
+PickMeCtrl.prototype.timeout = function($http) {
+  $http({method: 'GET', url: '/companion/get/' + this.userId}).
+      success(function(data) {
+        if (data.routesProposals) {
+          this.showDriver(data.routesProposals);
+        }
+      });
+};
+
+PickMeCtrl.prototype.routesProposals = function(route) {
+  clearInterval(this.timeout);
+};
 
 
 
