@@ -34,6 +34,7 @@ if ('development' == app.get('env')) {
 app.get('/', routes.index);
 app.get('/companion/get/:companionId', companion.get);
 app.get('/companion/pickMe', companion.pickMe);
+app.get('/companion/accept/:routeId/:companionId', companion.acceptDriver);
 app.get('/driver/registerRoute', driver.registerRoute);
 app.get('/driver/pickPassenger/:routeId/:companionId', driver.pickPassenger);
 app.get('/driver/route/:routeId', driver.getRoute);
