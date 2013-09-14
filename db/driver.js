@@ -12,9 +12,29 @@ exports.registerRoute = function (username, route, cb) {
         cb.call(null, err);
         return;
       }
+      var to = route.route[route.route.length - 1];
+      var from = route.route[0];
+      var searchRadius = 1.1 * Math.sqrt(Math.pow(to.lat - from.lat, 2) + Math.pow(to.lon - from.lon, 2)) * Math.PI / 180;
       mongo.find(
         "companions",
-        {}, // todo select based on location
+        {
+          to: {
+            $geoWithin: {
+              $centerSphere: [
+                [to.lon, to.lat],
+                0.5 / 6371 // radius = 500m
+              ]
+            }
+          },
+          from: {
+            $geoWithin: {
+              $centerSphere: [
+                [(to.lon + from.lon) / 2, (to.lat + from.lat) / 2],
+                searchRadius
+              ]
+            }
+          }
+        },
         function (err, companions) {
           cb.call(null, err, route, companions);
         });

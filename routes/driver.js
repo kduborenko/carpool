@@ -10,8 +10,8 @@ exports.registerRoute = function (req, res) {
       companions: companions.map(function (companion) {
         var toPointView = function (point) {
           return {
-            lat: point.loc[0],
-            lon: point.loc[1]
+            lat: point[1],
+            lon: point[0]
           }
         };
         var byType = function (type) {
@@ -21,8 +21,8 @@ exports.registerRoute = function (req, res) {
         };
         return {
           companionId: companion._id,
-          from: companion.points.filter(byType("from")).map(toPointView)[0],
-          to: companion.points.filter(byType("to")).map(toPointView)[0]
+          from: toPointView(companion.from),
+          to: toPointView(companion.to)
         }
       })
     })
@@ -34,8 +34,7 @@ exports.pickPassenger = function (req, res) {
   var routeId = req.params.routeId;
   driverDB.pickPassenger(routeId, companionId, function (err) {
     res.send({
-      status: "ok",
-      rs: err
+      status: "ok"
     })
   });
 };
