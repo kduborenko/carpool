@@ -48,6 +48,14 @@ exports.getRoute = function (req, res) {
       res.send({
         routeId: route._id,
         username: route.username,
+        companions: route.companions ?
+          route.companions.map(function (companion) {
+            return {
+              companionId: companion,
+              companionUrl: req.protocol + "://" + req.headers.host + "/companion/get/" + companion
+            }
+          }) :
+          null,
         from: route.route[0],
         to: route.route[route.route.length - 1],
         route: route.route

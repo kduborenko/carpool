@@ -18,6 +18,7 @@ exports.registerRoute = function (username, route, cb) {
       mongo.find(
         "companions",
         {
+          lookingForDriver: true,
           to: {
             $geoWithin: {
               $centerSphere: [

@@ -19,6 +19,7 @@ exports.get = function (req, res) {
       res.send({
         companionId: companion._id,
         username: companion.username,
+        lookingForDriver: companion.lookingForDriver || false,
         from: {
           lat: companion.from[1],
           lon: companion.from[0]
@@ -28,11 +29,13 @@ exports.get = function (req, res) {
           lon: companion.to[0]
         },
         routesProposals: companion.routes_proposals ?
-          companion.routes_proposals.map(function (proposal) {
+          companion.routes_proposals.map(function (routeId) {
             return {
-              routeId: proposal,
+              routeId: routeId,
               routeUrl: req.protocol + "://" + req.headers.host
-                          + "/driver/route/" + proposal
+                          + "/driver/route/" + routeId,
+              acceptDriverUrl: req.protocol + "://" + req.headers.host
+                          + "/companion/accept/" + routeId + "/" + companion._id
             }
           }) :
           null
@@ -40,5 +43,16 @@ exports.get = function (req, res) {
     } else {
       res.status(404).send();
     }
+  });
+};
+
+exports.acceptDriver = function (req, res) {
+  var routeId = req.params.routeId;
+  var companionId = req.params.companionId;
+  companionDB.acceptDriver(routeId, companionId, function (err) {
+    res.send({
+      status: "ok",
+      routeUrl: req.protocol + "://" + req.headers.host + "/driver/route/" + routeId
+    })
   });
 };
