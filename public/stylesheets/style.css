@@ -20,11 +20,15 @@ a {
 }
 
 #pick-me {
-  //display: none;
+  display: none;
 }
 
-#map-canvas {
+.map-canvas {
   height: 400px;
   margin: 30px 0;
   width: 100%;
+}
+
+#i-am-driving {
+  display: none;
 }

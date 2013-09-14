@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+<html xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html" ng-app="carpool">
 <head>
   <link href="bootstrap/css/bootstrap.css" rel="stylesheet"/>
   <link href="stylesheets/style.css" rel="stylesheet"/>
@@ -7,6 +7,10 @@
           src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDFyITuorKpRP0xkqP8nHtdPhxVEAbzYAw&sensor=true"></script>
 </head>
 <body>
+
+<div ng-view></div>
+
+<!--
 <section id="login-page">
   <h1>Login</h1>
   <form role="form">
@@ -30,15 +34,15 @@
   <div class="page-header">
     <h1>I need to go?</h1>
   </div>
-  <form class="form-inline" role="form" id="search-place">
+  <form class="form-inline search-place" role="form">
     <div class="input-group">
-      <input type="text" class="form-control" id="search-place-text">
+      <input type="text" class="form-control search-place-text">
       <span class="input-group-btn">
         <button class="btn btn-default" type="submit">Go!</button>
       </span>
     </div>
   </form>
-  <div id="map-canvas"></div>
+  <div class="map-canvas"></div>
   <form class="form-inline" role="form" id="set-timeout">
     <div class="input-group">
       <select class="form-control">
@@ -54,9 +58,68 @@
     </div>
   </form>
 </section>
+<section id="i-am-driving">
+  <div class="page-header">
+    <h1>I'm driving to</h1>
+  </div>
+  <form class="form-inline search-place" role="form">
+    <div class="input-group">
+      <input type="text" class="form-control search-place-text">
+      <span class="input-group-btn">
+        <button class="btn btn-default" type="submit">Go!</button>
+      </span>
+    </div>
+  </form>
+  <div class="map-canvas"></div>
 
+  <div style="display: none">
+    <div id="first" class="passenger-card" style="width: 150px;">
+      <img src="img/Anton_Tomchenko.gif" style="width: 30px; height: 40px; float: left; margin-right: 5px"> Anton Tomchenko<br/>
+      <button type="button" class="btn btn-success btn-xs">Pick him</button>
+      <button type="button" class="btn btn-danger btn-xs">Dismiss</button>
+    </div>
+    <div id="second" class="passenger-card" style="width: 150px;">
+      <img src="img/Yury_Trushkov.gif" style="width: 30px; height: 40px; float: left; margin-right: 5px"> Yury Trushkov<br/>
+      <button type="button" class="btn btn-success btn-xs">Pick him</button>
+      <button type="button" class="btn btn-danger btn-xs">Dismiss</button>
+    </div>
+  </div>
+</section>
+<section id="passengers-list">
+  <div class="page-header">
+    <h1>I'm driving to</h1>
+    <div class="panel panel-default">
+      <div class="panel-heading">Anton Tomchenko</div>
+      <div class="panel-body">
+        <img src="img/Anton_Tomchenko.gif" style="width: 100px; height: 133px; float: left; margin-right: 20px">
+        Coordinates: <a href="http://maps.google.com/maps?ll=37.3830,-122.29147">lat: 37.3830, lng: -122.2914</a>
+        Address: 1600 Amp str, Mountain View, CA 94040
+        <p>
+          <button type="button" class="btn btn-success btn-lg">Poke him</button>
+          <button type="button" class="btn btn-danger btn-lg">Dismiss</button>
+        </p>
+      </div>
+    </div>
+    <div class="panel panel-default">
+      <div class="panel-heading">Anton Tomchenko</div>
+      <div class="panel-body">
+        <img src="img/Yury_Trushkov.gif" style="width: 100px; height: 133px; float: left; margin-right: 20px">
+        Coordinates: <a href="http://maps.google.com/maps?ll=37.3830,-122.29147">lat: 37.3830, lng: -122.2914</a>
+        Address: 1600 Amp str, Mountain View, CA 94040
+        <p>
+          <button type="button" class="btn btn-success btn-lg">Poke him</button>
+          <button type="button" class="btn btn-danger btn-lg">Dismiss</button>
+        </p>
+      </div>
+    </div>
+  </div>
+
+</section>
+-->
+<script src="lib/angular.js"></script>
 <script src="http://code.jquery.com/jquery.js"></script>
 <script src="bootstrap/js/bootstrap.js"></script>
+<script src="js/controllers.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>
