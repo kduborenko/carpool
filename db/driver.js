@@ -7,12 +7,21 @@ exports.registerRoute = function (username, route, cb) {
       username: username,
       route: route
     },
-    function (err, doc) {
-      cb.call(null, err, doc);
+    function (err, route) {
+      if (err) {
+        cb.call(null, err);
+        return;
+      }
+      mongo.find(
+        "companions",
+        {}, // todo select based on location
+        function (err, companions) {
+          cb.call(null, err, route, companions);
+        });
     })
 };
 
-exports.pickPassenger = function(routeId, companionId, cb) {
+exports.pickPassenger = function (routeId, companionId, cb) {
   mongo.update(
     "companions",
     {
