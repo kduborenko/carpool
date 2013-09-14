@@ -79,9 +79,13 @@ PickMeCtrl.prototype.showDestination = function(destination, $http) {
     params: {
       username: 'Valera',
       from: latLngToJSON(this.myLatlng),
-      to: latLngToJSON(destination),
-      wt: this.scope.wt
-    }});
+      to: latLngToJSON(destination)
+     // wt: this.scope.wt
+    }});//.success(angular.bind(this, this.waitForDriver));
+};
+
+PickMeCtrl.prototype.waitForDriver = function(data) {
+
 };
 
 
