@@ -1,18 +1,18 @@
 <div class="page-header">
   <h1>I need to go?</h1>
 </div>
-<form class="form-inline search-place" role="form">
+<form class="form-inline search-place" role="form" ng-submit="go()">
   <div class="input-group">
-    <input type="text" class="form-control search-place-text">
+    <input type="text" class="form-control" ng-model="destination">
       <span class="input-group-btn">
         <button class="btn btn-default" type="submit">Go!</button>
       </span>
   </div>
 </form>
 <div class="map-canvas"></div>
-<form class="form-inline" role="form" id="set-timeout">
+<form class="form-inline" role="form" ng-submit="wait()">
   <div class="input-group">
-    <select class="form-control">
+    <select class="form-control" ng-model="wt">
       <option>5 min</option>
       <option>10 min</option>
       <option>15 min</option>

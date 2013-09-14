@@ -11,6 +11,8 @@ angular.module('carpool', []).
 
 
 
+
+
 function getLocation()
 {
   if (navigator.geolocation)
@@ -120,7 +122,7 @@ function showCoordInfoWindow(pas) {
 };
 
 $(function () {
-  return;
+  //return;
 //  if ($('#pick-me').isShown()) {
     google.maps.event.addDomListener(window, 'load', getLocation);
 
