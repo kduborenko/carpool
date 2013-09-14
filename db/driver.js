@@ -11,3 +11,20 @@ exports.registerRoute = function (username, route, cb) {
       cb.call(null, err, doc);
     })
 };
+
+exports.pickPassenger = function(routeId, companionId, cb) {
+  mongo.update(
+    "companions",
+    {
+      _id: new mongo.types.ObjectID(companionId)
+    },
+    {
+      $addToSet: {
+        routes_proposals: new mongo.types.ObjectID(routeId)
+      }
+    },
+    function (err) {
+      cb.call(null, err);
+    }
+  )
+};

@@ -10,3 +10,14 @@ exports.registerRoute = function (req, res) {
     })
   });
 };
+
+exports.pickPassenger = function (req, res) {
+  var companionId = req.params.companionId;
+  var routeId = req.params.routeId;
+  driverDB.pickPassenger(routeId, companionId, function (err) {
+    res.send({
+      status: "ok",
+      rs: err
+    })
+  });
+};
