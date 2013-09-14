@@ -22,7 +22,9 @@ exports.registerRoute = function (req, res) {
         return {
           companionId: companion._id,
           from: toPointView(companion.from),
-          to: toPointView(companion.to)
+          to: toPointView(companion.to),
+          pickupUrl: req.protocol + "://" + req.headers.host
+            + "/driver/pickPassenger/" + route._id + "/" + companion._id
         }
       })
     })
