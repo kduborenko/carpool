@@ -9,11 +9,14 @@ var companion = require('./routes/companion');
 var driver = require('./routes/driver');
 var http = require('http');
 var path = require('path');
+var https = require('https');      // module for https
+var fs = require('fs');            // required to read certs and keys
 
 var app = express();
 
 // all environments
 app.set('port', process.env.PORT || 3000);
+app.set('ssl port', process.env.SSL_PORT || 3443);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 app.use(express.favicon());
@@ -33,6 +36,22 @@ app.get('/companion/pickMe', companion.pickMe);
 app.get('/driver/registerRoute', driver.registerRoute);
 app.get('/driver/pickPassenger/:routeId/:companionId', driver.pickPassenger);
 
-http.createServer(app).listen(app.get('port'), function(){
-  console.log('Express server listening on port ' + app.get('port'));
+// SSL
+var credentials = {
+	key: fs.readFileSync('ssl/server.key'),
+	cert: fs.readFileSync('ssl/server.crt'),
+	ca: fs.readFileSync('ssl/ca.crt'),
+	passphrase: 'kostoh4a',
+	requestCert: false,
+	rejectUnauthorized: false
+};
+
+var httpServer = http.createServer(app);
+var httpsServer = https.createServer(credentials, app);
+
+httpServer.listen(app.get('port'), function(){
+   console.log(' HTTP listening on port ' + app.get('port'));
+});
+httpsServer.listen(app.get('ssl port'), function(){
+   console.log('HTTPS listening on port ' + app.get('ssl port'));
 });
