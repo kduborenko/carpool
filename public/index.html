@@ -27,12 +27,36 @@
   <button type="button" class="btn btn-default btn-lg btn-block">Take Aboard</button>
 </section>
 <section id="pick-me">
-  <h1>I need to go?</h1>
-  <div id="map-canvas"/>
+  <div class="page-header">
+    <h1>I need to go?</h1>
+  </div>
+  <form class="form-inline" role="form" id="search-place">
+    <div class="input-group">
+      <input type="text" class="form-control" id="search-place-text">
+      <span class="input-group-btn">
+        <button class="btn btn-default" type="submit">Go!</button>
+      </span>
+    </div>
+  </form>
+  <div id="map-canvas"></div>
+  <form class="form-inline" role="form" id="set-timeout">
+    <div class="input-group">
+      <select class="form-control">
+        <option>5 min</option>
+        <option>10 min</option>
+        <option>15 min</option>
+        <option>30 min</option>
+        <option>1 hour</option>
+      </select>
+      <span class="input-group-btn">
+        <button class="btn btn-default" type="submit">Wait for drivers</button>
+      </span>
+    </div>
+  </form>
 </section>
 
-<script src="js/app.js"></script>
 <script src="http://code.jquery.com/jquery.js"></script>
 <script src="bootstrap/js/bootstrap.js"></script>
+<script src="js/app.js"></script>
 </body>
 </html>
