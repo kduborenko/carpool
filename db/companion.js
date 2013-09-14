@@ -10,3 +10,12 @@ exports.pickMe = function (username, from, to, cb) {
       cb.call(null, err, doc);
     });
 };
+
+exports.byId = function (companionId, cb) {
+  mongo.findOne('companions', {
+      _id: new mongo.types.ObjectID(companionId)
+    },
+    function (err, doc) {
+      cb.call(null, err, doc);
+    });
+};

@@ -57,3 +57,12 @@ exports.pickPassenger = function (routeId, companionId, cb) {
     }
   )
 };
+
+exports.byId = function (routeId, cb) {
+  mongo.findOne('driver_routes', {
+      _id: new mongo.types.ObjectID(routeId)
+    },
+    function (err, doc) {
+      cb.call(null, err, doc);
+    });
+};

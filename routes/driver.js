@@ -40,3 +40,20 @@ exports.pickPassenger = function (req, res) {
     })
   });
 };
+
+exports.getRoute = function (req, res) {
+  var routeId = req.params.routeId;
+  driverDB.byId(routeId, function (err, route) {
+    if (route) {
+      res.send({
+        routeId: route._id,
+        username: route.username,
+        from: route.route[0],
+        to: route.route[route.route.length - 1],
+        route: route.route
+      });
+    } else {
+      res.status(404).send();
+    }
+  });
+};

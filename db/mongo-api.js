@@ -32,6 +32,19 @@ exports.find = function (coll, query, cb) {
   });
 };
 
+exports.findOne = function (coll, query, cb) {
+  mongoClient.connect(dbSettings.url, function (err, db) {
+    if (err) {
+      cb.call(null, err, null);
+      return;
+    }
+    db.collection(coll).findOne(query, function (err, doc) {
+      cb.call(null, err, doc);
+      db.close();
+    });
+  });
+};
+
 exports.update = function (coll, query, request, cb) {
   mongoClient.connect(dbSettings.url, function (err, db) {
     if (err) {
