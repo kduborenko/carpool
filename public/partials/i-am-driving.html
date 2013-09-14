@@ -1,9 +1,9 @@
 <div class="page-header">
   <h1>I'm driving to</h1>
 </div>
-<form class="form-inline search-place" role="form">
+<form class="form-inline" role="form" ng-submit="go()">
   <div class="input-group">
-    <input type="text" class="form-control search-place-text">
+    <input type="text" class="form-control" ng-model="destination">
       <span class="input-group-btn">
         <button class="btn btn-default" type="submit">Go!</button>
       </span>

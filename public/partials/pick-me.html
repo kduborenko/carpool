@@ -1,7 +1,8 @@
 <div class="page-header">
   <h1>I need to go?</h1>
 </div>
-<form class="form-inline search-place" role="form" ng-submit="go()">
+
+<form class="form-inline" role="form" ng-submit="go()">
   <div class="input-group">
     <input type="text" class="form-control" ng-model="destination">
       <span class="input-group-btn">
@@ -9,7 +10,9 @@
       </span>
   </div>
 </form>
+
 <div class="map-canvas"></div>
+
 <form class="form-inline" role="form" ng-submit="wait()">
   <div class="input-group">
     <select class="form-control" ng-model="wt">
