@@ -20,7 +20,8 @@ exports.login = function (req, res) {
         {
           hostname: 'pmcmsq.epam.com',
           path: '/pmc/login.do',
-          headers: req.headers
+          headers: req.headers,
+          method: 'POST'
         },
         function (rs) {
           console.log(rs.statusCode)
