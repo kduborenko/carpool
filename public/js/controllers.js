@@ -48,12 +48,22 @@ function PickMeCtrl($scope, $http) {
   $scope.wait = angular.bind(this, function() {
     $http({method: 'GET', url: '/companion/pickMe',
       params: {
-        username: 'Valera',
+        username: 'Anton_Tomchenko@epam.com',
         from: latLngToJSON(this.myLatlng),
         to: latLngToJSON(this.destination)
         // wt: this.scope.wt
       }}).success(angular.bind(this, this.waitForDriver, $http));
   })
+
+  $scope.accept = angular.bind(this, function() {
+    $http({method: 'GET', url: this.acceptDriver});
+    jQuery("#route-found").modal('hide');
+  });
+
+  $scope.dismiss = angular.bind(this, function() {
+    jQuery("#route-found").modal('hide');
+  })
+
 };
 
 PickMeCtrl.prototype.initialize = function(position) {
@@ -92,7 +102,7 @@ PickMeCtrl.prototype.waitForDriver = function($http, data) {
     this.userId = data.id;
   }
   jQuery("#wait-modal").modal();
-  this.timer = setInterval(angular.bind(this, this.timeout, $http), 1000);
+  this.timer = setTimeout(angular.bind(this, this.timeout, $http), 15000);
 };
 
 PickMeCtrl.prototype.timeout = function($http) {
@@ -106,6 +116,10 @@ PickMeCtrl.prototype.timeout = function($http) {
 
 PickMeCtrl.prototype.showDriver = function(route) {
   clearInterval(this.timeout);
+  jQuery("#wait-modal").modal('hide');
+  jQuery("#route-found").modal();
+  this.proposedRoute = route[0].routeUrl;
+  this.acceptDriver = route[0].acceptDriverUrl;
 };
 
 
@@ -203,15 +217,14 @@ IAmDrivingCtrl.prototype.calculateRoad = function() {
 
       // For each route, display summary information.
       var route = response.routes[0].legs[0];
-      var steps = [];
+      this.steps = [];
       for (var i = 0; i < route.steps.length; i++) {
-        steps.push({lat: route.steps[i].start_point.lat(), lon: route.steps[i].start_point.lng()});
+        this.steps.push({lat: route.steps[i].start_point.lat(), lon: route.steps[i].start_point.lng()});
       }
-      console.log(steps);
       this.http({method: 'GET', url: '/driver/registerRoute',
         params: {
-          username: 'Vasia',
-          route: JSON.stringify(steps)
+          username: 'Yury_Trushkov@epam.com',
+          route: JSON.stringify(this.steps)
         }}).success(angular.bind(this, this.showPassengers));
     }
   }));
@@ -219,6 +232,7 @@ IAmDrivingCtrl.prototype.calculateRoad = function() {
 
 IAmDrivingCtrl.prototype.showPassengers = function(data) {
   if (data.status == 'ok') {
+    this.routeId = 
     for (var i = 0; i < data.companions.length; i++) {
       this.showCoordInfoWindow(data.companions[i]);
     }
@@ -228,7 +242,7 @@ IAmDrivingCtrl.prototype.showPassengers = function(data) {
 
 IAmDrivingCtrl.prototype.showCoordInfoWindow = function(pas) {
   var html = '<div class="passenger-card" style="width: 150px;">' +
-      '     <img src="img/Anton_Tomchenko.gif" style="width: 30px; height: 40px; float: left; margin-right: 5px"> ' + pas.companionId.substr(0,10) +'<br/>' +
+      '     <img src="img/Anton_Tomchenko.gif" style="width: 30px; height: 40px; float: left; margin-right: 5px"> ' + pas.upsaInfo.nativeName +'<br/>' +
       '     <button type="button" class="btn btn-success btn-xs" onclick="window.iamdrivingcrtl.add(\'' + pas.companionId +'\',\'' + pas.pickupUrl + '\')">Pick him</button>' +
       '      <button type="button" class="btn btn-danger btn-xs" onclick="window.iamdrivingcrtl.remove(\'' + pas.companionId +'\')">Dismiss</button>' +
       '    </div>';
@@ -245,11 +259,25 @@ IAmDrivingCtrl.prototype.add = function(id, url) {
   this.coordInfoWindows[id].close();
   this.http({method: 'get', url: url});
   delete this.coordInfoWindows[id];
+  setTimeout(angular.bind(this, this.waitForAccept), 15000);
 };
 
 IAmDrivingCtrl.prototype.remove = function(id) {
   this.coordInfoWindows[id].close();
   delete this.coordInfoWindows[id];
+};
+
+IAmDrivingCtrl.prototype.waitForAccept = function() {
+  this.http({method: 'GET', url: '/driver/route/'}).success(angular.bind(this, this.acceptedPassengers));
+};
+
+IAmDrivingCtrl.prototype.acceptedPassengers = function(data) {
+  if (data.status == 'ok') {
+    console.log(data);
+  }
+  for (var i = 0; i < data.companions.length; i++) {
+    console.log(data.companions[i]);
+  }
 };
 
 

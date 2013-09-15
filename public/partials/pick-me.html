@@ -44,3 +44,26 @@
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
+<div class="modal fade" id="route-found">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Driver has been found!</h4>
+      </div>
+      <div class="modal-body">
+        <img src="img/Yury_Trushkov.gif" style="width: 100px; height: 133px; float: left; margin-right: 20px">
+        Coordinates: <a href="http://maps.google.com/maps?ll=37.3830,-122.29147">lat: 37.3830, lng: -122.2914</a><br/>
+        Address: 1600 Amp str, Mountain View, CA 94040
+        <p>
+          <button type="button" class="btn btn-success btn-lg" ng-click="accept()">Accept</button>
+          <button type="button" class="btn btn-danger btn-lg" ng-click="dismiss()">Dismiss</button>
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
