@@ -1,10 +1,22 @@
 var driverDB = require('../db/driver');
+var companionDB = require('../db/companion');
 var social = require('./social');
 
 exports.registerRoute = function (req, res) {
   var route = JSON.parse(req.query.route);
   var username = req.query.username;
   driverDB.registerRoute(username, route, function (err, route, companions) {
+    function resolveUpsaInfo(index, companions, cb) {
+      social.getUserByEmail(companions[index].username, function (userInfo) {
+        companions[index].upsaInfo = userInfo;
+        if (++index < companions.length) {
+          resolveUpsaInfo(index, companions, cb);
+        } else {
+          cb.call(null, companions);
+        }
+      })
+    }
+
     resolveUpsaInfo(0, companions, function (companions) {
       res.send({
         status: "ok",
@@ -37,17 +49,6 @@ exports.registerRoute = function (req, res) {
   });
 };
 
-function resolveUpsaInfo(index, companions, cb) {
-  social.getUserByEmail(companions[index].username, function (userInfo) {
-    companions[index].upsaInfo = userInfo;
-    if (++index < companions.length) {
-      resolveUpsaInfo(index, companions, cb);
-    } else {
-      cb.call(null, companions);
-    }
-  })
-}
-
 exports.pickPassenger = function (req, res) {
   var companionId = req.params.companionId;
   var routeId = req.params.routeId;
@@ -62,20 +63,38 @@ exports.getRoute = function (req, res) {
   var routeId = req.params.routeId;
   driverDB.byId(routeId, function (err, route) {
     if (route) {
-      res.send({
-        routeId: route._id,
-        username: route.username,
-        companions: route.companions ?
-          route.companions.map(function (companion) {
-            return {
-              companionId: companion,
-              companionUrl: req.protocol + "://" + req.headers.host + "/companion/get/" + companion
+      function resolveUpsaInfo(index, companions, cb) {
+        companionDB.byId(companions[index].companionId.toString(), function (err, companion) {
+          companions[index].username = companion.username;
+          social.getUserByEmail(companion.username, function (userInfo) {
+            companions[index].upsaInfo = userInfo;
+            if (++index < companions.length) {
+              resolveUpsaInfo(index, companions, cb);
+            } else {
+              cb.call(null, companions);
             }
-          }) :
-          null,
-        from: route.route[0],
-        to: route.route[route.route.length - 1],
-        route: route.route
+          })
+        })
+      }
+
+      var companions = route.companions ?
+        route.companions.map(function (companion) {
+          return {
+            companionId: companion,
+            companionUrl: req.protocol + "://" + req.headers.host + "/companion/get/" + companion
+          }
+        }) :
+        null;
+
+      resolveUpsaInfo(0, companions, function (companions) {
+        res.send({
+          routeId: route._id,
+          username: route.username,
+          companions: companions,
+          from: route.route[0],
+          to: route.route[route.route.length - 1],
+          route: route.route
+        });
       });
     } else {
       res.status(404).send();
