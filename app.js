@@ -7,6 +7,7 @@ var express = require('express');
 var routes = require('./routes');
 var companion = require('./routes/companion');
 var driver = require('./routes/driver');
+var user = require('./routes/user');
 var http = require('http');
 var path = require('path');
 var https = require('https');      // module for https
@@ -38,6 +39,7 @@ app.get('/companion/accept/:routeId/:companionId', companion.acceptDriver);
 app.get('/driver/registerRoute', driver.registerRoute);
 app.get('/driver/pickPassenger/:routeId/:companionId', driver.pickPassenger);
 app.get('/driver/route/:routeId', driver.getRoute);
+app.get('/user/:email', user.getUserInfo);
 
 // SSL
 var credentials = {

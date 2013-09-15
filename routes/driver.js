@@ -1,35 +1,52 @@
 var driverDB = require('../db/driver');
+var social = require('./social');
 
 exports.registerRoute = function (req, res) {
   var route = JSON.parse(req.query.route);
   var username = req.query.username;
   driverDB.registerRoute(username, route, function (err, route, companions) {
-    res.send({
-      status: "ok",
-      routeId: route._id,
-      companions: companions.map(function (companion) {
-        var toPointView = function (point) {
+    resolveUpsaInfo(0, companions, function (companions) {
+      res.send({
+        status: "ok",
+        routeId: route._id,
+        companions: companions.map(function (companion) {
+          var toPointView = function (point) {
+            return {
+              lat: point[1],
+              lon: point[0]
+            }
+          };
+          var byType = function (type) {
+            return function (point) {
+              return point.type == type
+            }
+          };
           return {
-            lat: point[1],
-            lon: point[0]
+            companionId: companion._id,
+            username: companion.username,
+            image: companion.upsaInfo ? "https://upsa.epam.com/workload/photo/" + companion.upsaInfo.id : null,
+            from: toPointView(companion.from),
+            to: toPointView(companion.to),
+            upsaInfo: companion.upsaInfo,
+            pickupUrl: req.protocol + "://" + req.headers.host
+              + "/driver/pickPassenger/" + route._id + "/" + companion._id
           }
-        };
-        var byType = function (type) {
-          return function (point) {
-            return point.type == type
-          }
-        };
-        return {
-          companionId: companion._id,
-          from: toPointView(companion.from),
-          to: toPointView(companion.to),
-          pickupUrl: req.protocol + "://" + req.headers.host
-            + "/driver/pickPassenger/" + route._id + "/" + companion._id
-        }
+        })
       })
-    })
+    });
   });
 };
+
+function resolveUpsaInfo(index, companions, cb) {
+  social.getUserByEmail(companions[index].username, function (userInfo) {
+    companions[index].upsaInfo = userInfo;
+    if (++index < companions.length) {
+      resolveUpsaInfo(index, companions, cb);
+    } else {
+      cb.call(null, companions);
+    }
+  })
+}
 
 exports.pickPassenger = function (req, res) {
   var companionId = req.params.companionId;
