@@ -1,6 +1,17 @@
 function LoginCtrl($scope, $location) {
   $scope.login = function() {
-    $location.path('select')
+    data = $.param({
+      dispatch: 'login',
+      username: 'user@epam.com',
+      password: 'password'
+    });
+
+    $.post('/login', data, function(req, res) {
+      // alert('progress');
+    })
+    .done(function() {
+      // logged in.
+    });
   }
 };
 
