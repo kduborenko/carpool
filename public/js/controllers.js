@@ -115,6 +115,7 @@ PickMeCtrl.prototype.timeout = function($http) {
 };
 
 PickMeCtrl.prototype.showDriver = function(route) {
+  this.scope.upsaInfo = route[0].upsaInfo;
   clearInterval(this.timeout);
   jQuery("#wait-modal").modal('hide');
   jQuery("#route-found").modal();
