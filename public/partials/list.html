@@ -1,17 +1,18 @@
 <div class="page-header">
   <h1>I'm driving to</h1>
 
-  <div class="panel panel-default" ng-repeat-start="item in companions">
+  <div class="panel panel-default" ssng-repeat="item in companions">
     <div class="panel-heading">Anton Tomchenko</div>
     <div class="panel-body">
       <img src="img/Anton_Tomchenko.gif" style="width: 100px; height: 133px; float: left; margin-right: 20px">
+      Томченко Антон Алексеевич<br/>
       Coordinates: <a href="http://maps.google.com/maps?ll=37.3830,-122.29147">lat: 37.3830, lng: -122.2914</a>
-      {{item.upsaInfo.unit}} {{item.upsaInfo.position}}<br/>
-      Phone: {{item.upsaInfo.mobilePhone[0]}}
+      Google CBU Senior Program Manager<br/>
+      Phone: +1-650-823-1609
       <p>
         <button type="button" class="btn btn-success btn-lg">Poke him</button>
         <button type="button" class="btn btn-danger btn-lg">Dismiss</button>
       </p>
     </div>
-  </div ng-repeat-end>
+  </div>
 </div>

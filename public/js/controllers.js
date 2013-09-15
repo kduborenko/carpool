@@ -102,7 +102,7 @@ PickMeCtrl.prototype.waitForDriver = function($http, data) {
     this.userId = data.id;
   }
   jQuery("#wait-modal").modal();
-  this.timer = setTimeout(angular.bind(this, this.timeout, $http), 15000);
+  this.timer = setTimeout(angular.bind(this, this.timeout, $http), 10000);
 };
 
 PickMeCtrl.prototype.timeout = function($http) {
