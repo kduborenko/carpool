@@ -97,14 +97,14 @@ PickMeCtrl.prototype.waitForDriver = function($http, data) {
 
 PickMeCtrl.prototype.timeout = function($http) {
   $http({method: 'GET', url: '/companion/get/' + this.userId}).
-      success(function(data) {
+      success(angular.bind(this, function(data) {
         if (data.routesProposals) {
           this.showDriver(data.routesProposals);
         }
-      });
+      }));
 };
 
-PickMeCtrl.prototype.routesProposals = function(route) {
+PickMeCtrl.prototype.showDriver = function(route) {
   clearInterval(this.timeout);
 };
 
@@ -119,6 +119,8 @@ PickMeCtrl.prototype.routesProposals = function(route) {
  */
 function IAmDrivingCtrl($scope, $http) {
   navigator.geolocation.getCurrentPosition(angular.bind(this, this.initialize));
+  // TODO: Hack to get clicks from map cards.
+  window.iamdrivingcrtl = this;
   this.map = null;
   this.geocoder = null;
   this.myLatlng = null;
@@ -126,6 +128,7 @@ function IAmDrivingCtrl($scope, $http) {
   this.myMarker = null;
   this.directionsDisplay;
   this.directionsService = new google.maps.DirectionsService();
+  this.coordInfoWindows = {};
   this.directionsServiceRequestOptions = {
     origin: null,
     destination: null,
@@ -146,6 +149,13 @@ function IAmDrivingCtrl($scope, $http) {
       }
     }));
   });
+
+  $scope.add = function(a, b) {
+    alert(a);
+  };
+  $scope.remove = function(a) {
+    alert(a);
+  };
 };
 
 IAmDrivingCtrl.prototype.initialize = function(position) {
@@ -193,16 +203,54 @@ IAmDrivingCtrl.prototype.calculateRoad = function() {
 
       // For each route, display summary information.
       var route = response.routes[0].legs[0];
-      var steps = '';
+      var steps = [];
       for (var i = 0; i < route.steps.length; i++) {
-        steps += route.steps[i].start_point;
+        steps.push({lat: route.steps[i].start_point.lat(), lon: route.steps[i].start_point.lng()});
       }
       console.log(steps);
+      this.http({method: 'GET', url: '/driver/registerRoute',
+        params: {
+          username: 'Vasia',
+          route: JSON.stringify(steps)
+        }}).success(angular.bind(this, this.showPassengers));
     }
   }));
-
 };
 
+IAmDrivingCtrl.prototype.showPassengers = function(data) {
+  if (data.status == 'ok') {
+    for (var i = 0; i < data.companions.length; i++) {
+      this.showCoordInfoWindow(data.companions[i]);
+    }
+  }
+};
+
+
+IAmDrivingCtrl.prototype.showCoordInfoWindow = function(pas) {
+  var html = '<div class="passenger-card" style="width: 150px;">' +
+      '     <img src="img/Anton_Tomchenko.gif" style="width: 30px; height: 40px; float: left; margin-right: 5px"> ' + pas.companionId.substr(0,10) +'<br/>' +
+      '     <button type="button" class="btn btn-success btn-xs" onclick="window.iamdrivingcrtl.add(\'' + pas.companionId +'\',\'' + pas.pickupUrl + '\')">Pick him</button>' +
+      '      <button type="button" class="btn btn-danger btn-xs" onclick="window.iamdrivingcrtl.remove(\'' + pas.companionId +'\')">Dismiss</button>' +
+      '    </div>';
+  var latLng = new google.maps.LatLng(pas.from.lat, pas.from.lon);
+  var coordInfoWindow = new google.maps.InfoWindow();
+  coordInfoWindow.setContent(html);
+  coordInfoWindow.setPosition(latLng);
+  coordInfoWindow.open(this.map);
+  coordInfoWindow.addListener('closeclick', angular.bind(this, this.remove, pas.companionId));
+  this.coordInfoWindows[pas.companionId] = coordInfoWindow;
+};
+
+IAmDrivingCtrl.prototype.add = function(id, url) {
+  this.coordInfoWindows[id].close();
+  this.http({method: 'get', url: url});
+  delete this.coordInfoWindows[id];
+};
+
+IAmDrivingCtrl.prototype.remove = function(id) {
+  this.coordInfoWindows[id].close();
+  delete this.coordInfoWindows[id];
+};
 
 
 function ListCtrl($scope, $routeParams) {
