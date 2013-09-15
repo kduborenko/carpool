@@ -131,7 +131,7 @@ PickMeCtrl.prototype.showDriver = function(route) {
  * @param $routeParams
  * @constructor
  */
-function IAmDrivingCtrl($scope, $http) {
+function IAmDrivingCtrl($scope, $http, $location) {
   navigator.geolocation.getCurrentPosition(angular.bind(this, this.initialize));
   // TODO: Hack to get clicks from map cards.
   window.iamdrivingcrtl = this;
@@ -153,6 +153,7 @@ function IAmDrivingCtrl($scope, $http) {
 
   this.http = $http;
   this.scope = $scope;
+  this.location = $location;
 
   $scope.go = angular.bind(this, function() {
     this.geocoder.geocode( { 'address': $scope.destination, 'region': 'us'}, angular.bind(this, function(results, status) {
@@ -232,7 +233,7 @@ IAmDrivingCtrl.prototype.calculateRoad = function() {
 
 IAmDrivingCtrl.prototype.showPassengers = function(data) {
   if (data.status == 'ok') {
-    this.routeId = 
+    this.routeId = data.routeId;
     for (var i = 0; i < data.companions.length; i++) {
       this.showCoordInfoWindow(data.companions[i]);
     }
@@ -259,7 +260,7 @@ IAmDrivingCtrl.prototype.add = function(id, url) {
   this.coordInfoWindows[id].close();
   this.http({method: 'get', url: url});
   delete this.coordInfoWindows[id];
-  setTimeout(angular.bind(this, this.waitForAccept), 15000);
+  setTimeout(angular.bind(this, this.waitForAccept), 20000);
 };
 
 IAmDrivingCtrl.prototype.remove = function(id) {
@@ -268,20 +269,17 @@ IAmDrivingCtrl.prototype.remove = function(id) {
 };
 
 IAmDrivingCtrl.prototype.waitForAccept = function() {
-  this.http({method: 'GET', url: '/driver/route/'}).success(angular.bind(this, this.acceptedPassengers));
+  this.http({method: 'GET', url: '/driver/route/' + this.routeId}).success(angular.bind(this, this.acceptedPassengers));
 };
 
 IAmDrivingCtrl.prototype.acceptedPassengers = function(data) {
-  if (data.status == 'ok') {
-    console.log(data);
-  }
-  for (var i = 0; i < data.companions.length; i++) {
-    console.log(data.companions[i]);
-  }
+  window.conpanions = data.companions;
+  this.location.path('list');
 };
 
 
 function ListCtrl($scope, $routeParams) {
+  $scope.companions = window.companions;
 };
 
 
