@@ -272,7 +272,7 @@ IAmDrivingCtrl.prototype.add = function(id, url) {
   this.coordInfoWindows[id].close();
   this.http({method: 'get', url: url});
   delete this.coordInfoWindows[id];
-  setTimeout(angular.bind(this, this.waitForAccept), 15000);
+  setTimeout(angular.bind(this, this.waitForAccept), 10000);
 };
 
 IAmDrivingCtrl.prototype.remove = function(id) {
